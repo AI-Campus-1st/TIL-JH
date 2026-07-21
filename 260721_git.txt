@@ -1,0 +1,17 @@
+github - 커뮤니티(게시판)
+git - 글 관리 프로그램(올리는것 까지)
+레퍼지토리 : 저장소(only-pull-me : 코드관련 강의자료,실습코드,예제코드 폴더)
+
+최초 작성자(Author) 설정 방법
+git config --global user.name "닉네임"
+git config --global user.email "github 이메일"
+
+저장소 가져오기(최초1회)
+git clone 저장소 주소
+-> 그이후 git pull로 가져옴
+
+[명령어]
+ls : 현재 폴더안의 파일 list
+mkdir : 폴더 생성
+cd : 폴더 이동
+git clone : 레퍼지토리 복제
