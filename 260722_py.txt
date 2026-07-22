@@ -1,0 +1,88 @@
+강사님 수업할때 흐름을 따라오고, 코드작성을 먼저하고, 주석 놓치면 git pull origin master 를 통해서 그때그때 받아오면 된다.
+
+clone은 모두 복제해서 가져오는거고, pull은 변경된 commit만 당겨오는 것. (참고로 push는 기록을 업로드)
+
+*.jpynb : 주피터노트북 확장자 
+
+오늘 수업을 위해 설치하는 도구들
+-> 개발코드 편집도구(vscode) 설치
+-> anaconda3 설치 : 직접개발전에 가상환경을 만들기도 편하고, 데이터분석 라이브러리도 모여있어서 쓰기편함(파이썬 포함)
+
+시작+shift+s : 스크린샷 단축키
+
+터미널(CLI) vs GUI
+
+환경 변수 : OS(윈도우orMAC)의 변수 : Path(경로에 대한 변수)라는 친구덕분에 cmd(명령 프롬프트)에서도 git/conda을 사용 가능하다
+변수? : 특정이름에 값을 넣어놓는 것, 값을 담고있는 것
+x = 5
+name = 'jason'
+
+프로그램 설치시에 Path에 추가/등록 하시겠냐 ? 라는 질문은 -> 윈도우 환경 변수에 추가해서 cmd에서 사용 가능하게끔 하는거
+
+개발환경 : Python을 사용하기 위해  Anaconda를 설치
+가상 환경 (Virtualen Environment) : 특정 pyhon 버전을 등록한 환경
+
+가상환경 설정 : conda create -n study python=3.12
+가상환경 목록 : conda env list
+
+개발환경 세팅하고 작업할때, vscode에서 작업공간을 설정
+-> 코드편집, 데이터분석, AI작업등을 할때는 무조건 작업공간을 설정해놓고 작업해야 한다. (기본중에 기본)
+
+마크다운(메모)
+파이썬블록(코드)
+
+
+명령모드에서 (esc누르면 명령모드)
+a : 위에 cell 생성
+b : 아래에 cell 생성
+dd : 삭제
+
+셀 유형 변환
+M : 마크다운으로
+Y : 파이썬으로 
+
+코드 실행
+CTRL + ENTER
+SHIFT + ENTER
+
+드래그 + CTRL + / : 주석처리
+
+[ ], { }, ( ) : 목록 자료형 list
+
+
+문장 = 가장 기본, 파이썬의 한줄 한줄
+OO표현식 = 문장안에서 하나의 값으로 나올 수 있는 문장(식별자, 값, 연산자)
+
+int = 정수
+float = 실수
+str = 문자열
+bool = 불리언
+tmp = 임시변수
+
+snakecase : 문자_문자_문자
+concat : 연결연산(문자열끼리 더할때)
+-> str(5) + '6' = '56'
+
+only-pull-me 폴더에서 github다운받기(강사님 answer)
+git pull origin master
+
+abs = 절대값(absolute)
+
+1 = True
+0 = False
+not 1 = False
+not 0 = True
+
+단축평가 : 더이상 볼필요없으면, 뒤에건 보지않는다. 
+and는 True면 뒤로넘어가고 False가 나오면 값을 출력
+or는 True면 바로 값을 출력(Flase가나오면 뒤로 넘어감) 
+
+
+코드 작업 진행 (vscode - workspace or TIL)
+TIL에 날짜_과목.txt 생성하여 내용 복붙
+과제 제출 시, 해당 txt파일을 업로드 or 텍스트 내용 복붙
+ -> 과제 정답, 해설을 보고 검토
+ -> 어려운 과제는 다음날 풀이 진행
+
+
+<과제>
