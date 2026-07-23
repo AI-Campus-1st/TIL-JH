@@ -1,0 +1,38 @@
+1. 
+word1 = 'apple'
+word2 = 'banana'
+
+print(word1.count('p')) # 2
+print(word2.count('a')) # 3
+
+2.
+n = 5
+m = 9
+
+print(('*' * n + '\n') * m)
+
+# 
+*****
+*****
+*****
+*****
+*****
+*****
+*****
+*****
+*****
+
+3.
+lotto = [5, 3, 35, 2, 17, 43]
+sorted_lotto = sorted(lotto)
+print(lotto) # [5, 3, 35, 2, 17, 43]
+print(sorted_lotto) # [2, 3, 5, 17, 35, 43]
+
+=> sorted()는 원본은 그대로 놔두고, 새로 정렬된 리스트가 반환
+
+lotto = [5, 3, 35, 2, 17, 43]
+sorted_lotto = lotto.sort()
+print(lotto) # [2, 3, 5, 17, 35, 43]
+print(sorted_lotto) # None
+
+=> .sort()는 원본이 정렬되고, None을 반환
