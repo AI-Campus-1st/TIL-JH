@@ -1,0 +1,26 @@
+1.
+변수 a와 b에 담긴 list의 요소는 같다. 
+print(a) # [1, 2, 5, 4, 5]
+print(b) # [1, 2, 5, 4, 5]
+=> list는 mutable데이터이고 메모리 주소를 복사하기 때문에,
+     a와b가 같은 메모리여서 같이 바뀐다.
+
+
+2.
+score_sum = 0
+for score in scores.values():
+    score_sum += score
+avg = score_sum / len(scores)
+print(avg) # 85.5
+
+
+3.
+blood_counter = {}
+for bld in bloods:
+    # print(bld)
+    if bld in blood_counter:
+        blood_counter[bld] += 1
+    else:
+        blood_counter[bld] = 1
+print(blood_counter)   # {'A': 3, 'B': 3, 'O': 3, 'AB': 3}
+
