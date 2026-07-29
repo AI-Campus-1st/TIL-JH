@@ -1,0 +1,42 @@
+※  4_0_함수와클래스_함수.ipynb
+
+정해지지 않은 여러개의 인자 처리 부터~
+가변인자(*args) => tuple처리
+가변키워드인자(**kwargs) => dict처리
+
+재귀 함수(recursive function)
+- 팩토리얼 계산
+ => 1!은 1을 반환해라를 설정해야한다.(종료조건이면서 기본값)
+          if n == 1:    # ★종료조건★
+              return 1
+
+더할 때 초기값은 = 0 , 곱할 때 초기값은 = 1
+
+※ 4_1_함수와클래스_클래스
+
+객체(Object)
+- 타입(type)
+- 속성(attribute)
+- 조작법(method)
+
+
+객체 지향 프로그래밍(Object 중심 프로그래밍)의 장점
+- 코드의 직관성
+- 활용의 용이성
+- 변경의 유연성
+
+※ 이름짓기 규칙
+1) snake_case: 단어와 단어 사이에 언더스코어(_)로 연결, 변수나 함수 이름에 주로 사용
+  ex. int_nums, words, blood_types
+
+2) UPPER_SNAKE_CASE: 상수에 사용(고정값)
+  ex. BASE_URL, PI, MAX_RETRIES
+
+3) PascalCase: 클래스명
+  ex. Person, NaverCrawler, MariaDB, DatabaseManager
+
+4) camelCase: javascript, java, rust 변수나 함수 이름으로 사용
+  ex. crawlOnePage(), getConnection()
+
+5) kebab-case: CSS
+  ex. main-page
