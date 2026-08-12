@@ -1,0 +1,11 @@
+[PyMySQL]
+
+1) 연결과 CRUD : .env분리/DictCursor/파라미터 바인딩(★)
+
+2) 트랜잭션과 대량 적재 : rollback/적재 방식 4가지 비교
+
+3) pandas 연동 : read_sql/to_sql/SQL과 pandas의 역할
+
+4) 탐색적 분석 : 새 테이블을 5분 안에 훑는 여섯 단계
+
+5) 세그먼트와 리포트 : RFM/차트/엑셀 자동 생성
