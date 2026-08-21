@@ -1,0 +1,220 @@
+## 1. PyMySQL 모듈 기반 카페 DB(cafe_db) 연동 커넥터 클래스 구현
+
+### 정답
+
+```py
+import pymysql
+from pymysql.cursors import DictCursor
+
+class CafeDBManager:
+    def __init__(self, host='localhost', user='root', password='your_password', db='cafe_db', port=3306):
+        self.config = {
+            'host': host,
+            'user': user,
+            'password': password,
+            'db': db,
+            'port': port,
+            'charset': 'utf8mb4',
+            'cursorclass': DictCursor
+        }
+
+    def get_connection(self):
+        return pymysql.connect(**self.config)
+
+    def execute_query(self, sql, params=None):
+        conn = self.get_connection()
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute(sql, params)
+                result = cursor.fetchall()
+                return result
+        except Exception as e:
+            print(f"[Query Error] {e}")
+            return []
+        finally:
+            conn.close()
+
+    def execute_update(self, sql, params=None):
+        conn = self.get_connection()
+        try:
+            with conn.cursor() as cursor:
+                affected_rows = cursor.execute(sql, params)
+                conn.commit()
+                return affected_rows
+        except Exception as e:
+            conn.rollback()
+            print(f"[Update Error & Rollback] {e}")
+            return 0
+        finally:
+            conn.close()
+
+if __name__ == '__main__':
+    db = CafeDBManager(password='test1234')
+    stores = db.execute_query("SELECT store_id, store_nm, seat_cnt FROM tb_store;")
+    print("=== 카페 매장 목록 ===")
+    for store in stores:
+        print(store)
+```
+
+### 해설
+
+- DictCursor를 사용하여 쿼리 결과를 딕셔너리 형태로 반환받으며, 예외 처리 및 트랜잭션 rollback(), 커넥션 자원 반납(close())을 객체 지향 형태로 모듈화
+
+## 2. SQL 1차 집계와 Pandas를 활용한 카페 핵심 실적 분석
+
+### 분석 1
+
+```py
+import pymysql
+import pandas as pd
+
+# 간단한 조회 helper 함수
+def db_query(conn, sql):
+    with conn.cursor() as cursor:
+        cursor.execute(sql)
+        return cursor.fetchall()
+
+# PyMySQL 커넥션 연결
+conn = pymysql.connect(
+    host='localhost', user='root', password='your_password',
+    db='cafe_db', charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor
+)
+
+# -------------------------------------------------------------------------
+# [분석 1] 매장별 매출 및 객단가(AOV) 진단
+# -------------------------------------------------------------------------
+print("--- 매장별 매출 및 객단가(AOV) 진단 ---")
+sql_1 = """
+    SELECT 
+        st.store_nm,
+        COUNT(DISTINCT o.order_id)  AS order_cnt,
+        SUM(i.qty * i.unit_price)   AS sales
+    FROM tb_order o
+        JOIN tb_order_item i ON o.order_id = i.order_id
+        JOIN tb_store st     ON o.store_id = st.store_id
+    GROUP BY st.store_nm;
+"""
+df1 = pd.DataFrame(db_query(conn, sql_1))
+df1['객단가'] = (df1['sales'] / df1['order_cnt']).round(0)
+df1 = df1.sort_values(by='sales', ascending=False)
+
+for idx, row in df1.iterrows():
+    print(f"• {row['store_nm']:<10}: 총 매출액 {int(row['sales']):>11,}원 | 주문건수 {row['order_cnt']:>7,}건 | 객단가 {int(row['객단가']):>7,}원")
+
+top_store = df1.iloc[0]
+
+print(f"\n인사이트: '{top_store['store_nm']}'이(가) 총 {int(top_store['sales']):,}원의 매출을 올려 전체 1위 매장으로 선정되었습니다.")
+
+conn.close()
+```
+
+### 해설
+
+- JOIN으로 3개 테이블을 연결하고 GROUP BY 로 매장별 집계
+- order_cnt는 COUNT(*) 대신 COUNT(DISTINCT ...)를 사용해 주문 중복 집계를 방지
+- sales는 SUM(i.qty * i.unit_price)로 매출액 계산
+- 객단가(AOV)를 python에서 별도 컬럼으로 계산: (sales / order_cnt)
+
+### 분석 2
+
+```py
+import pymysql
+import pandas as pd
+
+# 간단한 조회 helper 함수
+def db_query(conn, sql):
+    with conn.cursor() as cursor:
+        cursor.execute(sql)
+        return cursor.fetchall()
+
+# PyMySQL 커넥션 연결
+conn = pymysql.connect(
+    host='localhost', user='root', password='your_password',
+    db='cafe_db', charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor
+)
+
+# -------------------------------------------------------------------------
+# [분석 2] 시간대별 주문 피크 타임 분석
+# -------------------------------------------------------------------------
+print("--- 시간대별 주문 피크 타임 분석 ---")
+sql_2 = """
+    SELECT 
+        HOUR(order_dt) AS hour,
+        COUNT(*)       AS order_cnt
+    FROM tb_order
+    GROUP BY HOUR(order_dt);
+"""
+df2 = pd.DataFrame(db_query(conn, sql_2))
+peak2 = df2.sort_values('order_cnt', ascending=False).head(3)
+
+print("• 주문 집중 TOP 3 피크 시간대:")
+for idx, row in peak2.iterrows():
+    print(f"  - {int(row['hour']):>2}시: 총 {row['order_cnt']:,}건 주문 발생")
+
+conn.close()
+
+# 인사이트: 점심 피크 시각(12시~14시)에 주문이 집중되므로 해당 시간대에 파트타임 인력을 가동하는 것이 바람직함
+
+```
+
+### 해설
+
+- HOUR() 함수로 주문시각(order_dt)에서 시(hour)만 추출
+- GROUP BY 로 시간대별 주문건수 집계
+- nlargest(3) 또는 sort_values().head(3) 로 상위 3개 매장만 출력
+
+### 분석 3
+
+```py
+import pymysql
+import pandas as pd
+
+# 간단한 조회 helper 함수
+def db_query(conn, sql):
+    with conn.cursor() as cursor:
+        cursor.execute(sql)
+        return cursor.fetchall()
+
+# PyMySQL 커넥션 연결
+conn = pymysql.connect(
+    host='localhost', user='root', password='your_password',
+    db='cafe_db', charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor
+)
+
+# -------------------------------------------------------------------------
+# [분석 3] 메뉴 카테고리별 매출 점유율 분석
+# -------------------------------------------------------------------------
+print("--- 메뉴 카테고리별 매출 점유율 분석 ---")
+sql_3 = """
+    SELECT 
+        c.category_nm,
+        IFNULL(SUM(i.qty * i.unit_price), 0) AS category_sales,
+        IFNULL(SUM(i.qty), 0)                AS total_qty
+    FROM tb_menu_category c
+        JOIN tb_menu m ON c.category_id = m.category_id
+        LEFT JOIN tb_order_item i ON m.menu_id = i.menu_id
+    GROUP BY c.category_nm;
+"""
+
+df3 = pd.DataFrame(db_query(conn, sql_3))
+total_sales = df3['category_sales'].sum()
+df3['매출점유율(%)'] = ((df3['category_sales'] / total_sales) * 100).round(1)
+df3 = df3.sort_values(by='category_sales', ascending=False)
+
+for idx, row in df3.iterrows():
+    print(f"• {row['category_nm']:<6}: 매출액 {int(row['category_sales']):>11,}원 ({row['매출점유율(%)']:>5.1f}%) | 판매수량 {int(row['total_qty']):>7,}개")
+
+top_cat = df3.iloc[0]
+
+print(f"\n인사이트: '{top_cat['category_nm']}' 카테고리가 전체 매출의 {top_cat['매출점유율(%)']}%를 차지하는 핵심 주력 제품군입니다.")
+
+conn.close()
+```
+
+### 해설 
+
+- menu_category → menu → order_item 순으로 JOIN
+- IFNULL()로 매출액/판매수량 0인 경우 처리
+- GROUP BY 로 카테고리별 집계
+- 매출액 백분율 계산: (category_sales / total_sales) * 100
+- round(1)로 소수점 첫째 자리까지 반올림
