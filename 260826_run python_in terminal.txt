@@ -1,0 +1,7 @@
+python 스크립트 터미널에서 실행하는 방법
+
+1. 터미널 연다. (pswh -> cmd로 command prompt)
+2. 만약에 conda 자동으로 셋팅안된다 -> 
+	CTRL+SHIFT+P, Python Select Interpreter (가상환경 설정)
+	-> 이후 터미널 삭제하고 다시 열기
+3. 가상환경이 잡히면 python 스크립트.py 실행
