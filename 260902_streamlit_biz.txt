@@ -1,0 +1,1 @@
+streamlit run app.py(파일명)으로 streamlit 실행
